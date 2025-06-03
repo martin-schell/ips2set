@@ -5,7 +5,11 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 SCRIPTNAME=$(basename "$0" | cut -d'.' -f1)
-LOG_FILE="$SCRIPTNAME".log
+
+# If LOG_FILE is set in parent script
+if [ -z "$LOG_FILE" ]; then
+  LOG_FILE="$SCRIPT_DIR/$SCRIPTNAME".log
+fi
 
 function file_ends_with_newline() {
     [[ $(tail -c1 "$1" | wc -l) -gt 0 ]]
