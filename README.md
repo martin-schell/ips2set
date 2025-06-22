@@ -184,6 +184,26 @@ If these conditions are met, the command exits with status 1 without creating a 
 
 ## Further information
 
-- If the IP address is not valid, `ipset add -q <SETNAME> <IP> -exist` returns 1. If the IP address is valid but does not exist in set, it returns 0.
+If the IP address is not valid, `ipset add -q <SETNAME> <IP> -exist` returns 1. If the IP address is valid but does not exist in set, it returns 0.
+
+### Dealing with Counters in IPSets
+
+```sh
+ipset list "$set_name" | grep -Eo "$IPV4_PATTERN"
+```
+
+`-o` is necessary to extract the IP address from a set.
+`grep -E` will not return anything if the set also contains counters (see below).
+
+```sh
+$ sudo ipset create myset hash:net counters
+$ sudo ipset list myset | grep -E $IPV4_PATTERN
+192.0.2.1/24 packets 0 bytes 0
+```
+
+The patterns for IPv4 / IPv6 must not end with `$` as otherwise there are no matches in a set with counters (see above)
+
+No matches: `IPV4_PATTERN='^...))*$'`
+Matches: `IPV4_PATTERN='^...))*'`
 
 ## Sources

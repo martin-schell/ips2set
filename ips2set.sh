@@ -4,6 +4,7 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
 SCRIPTNAME=$(basename "$0" | cut -d'.' -f1)
 
 # If LOG_FILE is set in parent script
@@ -149,6 +150,8 @@ while IFS= read -r line; do
     fi
 done <"$in_file"
 
+# if $verbose; then log "DEBUG" "Content of set $set_name: $(ipset list "$set_name" | grep -E "$IPV4_PATTERN")"; fi
+
 # Create array from addresses in set
 if [ "$family" == "inet" ]; then
     for ip in $(ipset list "$set_name" | grep -E "$IPV4_PATTERN");
@@ -162,8 +165,8 @@ else
     done
 fi
 
-if $verbose; then log "DEBUG" "ips_in_set: ${ips_in_set[*]}"; fi
-if $verbose; then log "DEBUG" "ips_in_file: ${ips_in_file[*]}"; fi
+if $verbose; then log "DEBUG" "ips_in_set (${#ips_in_set[@]}): ${ips_in_set[*]}"; fi
+if $verbose; then log "DEBUG" "ips_in_file (${#ips_in_file[@]}): ${ips_in_file[*]}"; fi
 
 log "INFO" "--- Add addresses in $set_name ---"
 # Add non-existing addresses in set
